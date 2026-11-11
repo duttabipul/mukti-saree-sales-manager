@@ -1,0 +1,10 @@
+{
+  "description": "Helps sari shop staff record sales, items, and payments on mobile while giving owners a clear view of daily sales, customer dues, and low stock.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
