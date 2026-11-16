@@ -1366,23 +1366,35 @@ useEffect(() => {
     setPasswordError("");
   };
 
-  const verifyOwnerPassword = () => {
-    if (ownerPassword !== "1234" || !protectedTarget) {
-      setPasswordError("Incorrect password");
-      return;
-    }
-    if (protectedTarget === "owner-mode") {
-      setAccessMode("Owner");
-      setUnlockedSection(null);
-    } else {
-      setUnlockedSection(protectedTarget);
-      if (protectedTarget === "new-sale") newSale();
-      else setScreen(protectedTarget);
-    }
-    setProtectedTarget(null);
-    setOwnerPassword("");
-    setPasswordError("");
-  };
+  const verifyOwnerPassword = async () => {
+  if (!protectedTarget) return;
+
+  setPasswordError("");
+
+  const { error } = await supabase.auth.signInWithPassword({
+    email: "owner-001@muktisaree.local",
+    password: ownerPassword,
+  });
+
+  if (error) {
+    setPasswordError("Incorrect password");
+    return;
+  }
+
+  if (protectedTarget === "owner-mode") {
+    setAccessMode("Owner");
+    setUnlockedSection(null);
+  } else {
+    setUnlockedSection(protectedTarget);
+
+    if (protectedTarget === "new-sale") newSale();
+    else setScreen(protectedTarget);
+  }
+
+  setProtectedTarget(null);
+  setOwnerPassword("");
+  setPasswordError("");
+};
 
   const openSection = (section: string) => {
     setDrawerOpen(false);
