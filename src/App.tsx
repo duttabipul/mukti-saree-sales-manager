@@ -1110,7 +1110,11 @@ export default function App() {
     notes: "",
   });
   const [employees, setEmployees] = useState(initialEmployees);
-  const [loggedEmployeeId, setLoggedEmployeeId] = useState("EMP-001");
+  const [loggedEmployeeId, setLoggedEmployeeId] = useState("");
+  const [employeeLoginId, setEmployeeLoginId] = useState("");
+  const [employeeLoginPassword, setEmployeeLoginPassword] = useState("");
+  const [employeeLoginError, setEmployeeLoginError] = useState("");
+  const [employeeLoggedIn, setEmployeeLoggedIn] = useState(false);
   const [clockEmployeeId, setClockEmployeeId] = useState("EMP-001");
   const [attendance, setAttendance] = useState(initialAttendance);
   const [currentTime, setCurrentTime] = useState(() => new Date());
@@ -1140,6 +1144,68 @@ useEffect(() => {
 
   testSupabaseConnection();
 }, []);
+  const loginEmployee = async () => {
+  const employeeId = employeeLoginId.trim().toUpperCase();
+
+  if (!employeeId || !employeeLoginPassword) {
+    setEmployeeLoginError("Enter Employee ID and password");
+    return;
+  }
+
+  setEmployeeLoginError("");
+
+  const email = `${employeeId.toLowerCase()}@muktisaree.local`;
+
+  const { error: loginError } = await supabase.auth.signInWithPassword({
+    email,
+    password: employeeLoginPassword,
+  });
+
+  if (loginError) {
+    setEmployeeLoginError("Invalid Employee ID or password");
+    return;
+  }
+
+  const { data: employee, error: employeeError } = await supabase
+    .from("employees")
+    .select("id, employee_code, full_name, role, active")
+    .eq("employee_code", employeeId)
+    .single();
+
+  if (employeeError || !employee || !employee.active || employee.role !== "employee") {
+    await supabase.auth.signOut();
+    setEmployeeLoginError("Employee account is not available");
+    return;
+  }
+
+  const { data: openSession } = await supabase
+    .from("attendance")
+    .select("id")
+    .eq("employee_id", employee.id)
+    .is("clock_out", null)
+    .maybeSingle();
+
+  if (!openSession) {
+    const { error: attendanceError } = await supabase
+      .from("attendance")
+      .insert({
+        employee_id: employee.id,
+        clock_in: new Date().toISOString(),
+      });
+
+    if (attendanceError) {
+      console.error("Automatic clock-in failed:", attendanceError);
+    }
+  }
+
+  setLoggedEmployeeId(employee.employee_code);
+  setClockEmployeeId(employee.employee_code);
+  setAccessMode("Employee");
+  setEmployeeLoggedIn(true);
+  setEmployeeLoginPassword("");
+  setEmployeeLoginError("");
+  setScreen("dashboard");
+};
   const total = useMemo(
     () => items.reduce((sum, item) => sum + item.quantity * item.price, 0),
     [items],
