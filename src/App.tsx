@@ -1,3 +1,4 @@
+import { supabase } from './supabase'
 import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
 
 type Screen =
@@ -1123,7 +1124,22 @@ export default function App() {
     const timer = window.setInterval(() => setCurrentTime(new Date()), 1000);
     return () => window.clearInterval(timer);
   }, []);
+useEffect(() => {
+  const testSupabaseConnection = async () => {
+    const { data, error } = await supabase
+      .from('active_employees')
+      .select('*')
+      .limit(5);
 
+    if (error) {
+      console.error('Supabase connection error:', error);
+    } else {
+      console.log('Supabase connected successfully:', data);
+    }
+  };
+
+  testSupabaseConnection();
+}, []);
   const total = useMemo(
     () => items.reduce((sum, item) => sum + item.quantity * item.price, 0),
     [items],
