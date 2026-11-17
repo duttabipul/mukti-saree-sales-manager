@@ -1503,10 +1503,6 @@ if (openSession) {
     const protectedForEmployee =
   accessMode === "Employee" &&
   protectedSections.includes(section as ProtectedSection) &&
-  !(section === "dues" && currentPermissions.dueCollection);
-    const protectedForEmployee =
-  accessMode === "Employee" &&
-  protectedSections.includes(section as ProtectedSection) &&
   !(
     (section === "dues" || section === "advances") &&
     currentPermissions.dueCollection
