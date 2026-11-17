@@ -4983,6 +4983,48 @@ useEffect(() => {
               </div>
               <Icon name="chevron" size={16} />
             </div>
+            {accessMode === "Owner" && !employeeLoggedIn && (
+  <div className="employee-login-card">
+    <h3>Employee Login</h3>
+    <p>Enter your Employee ID and password.</p>
+
+    <label>
+      <span>Employee ID</span>
+      <input
+        value={employeeLoginId}
+        onChange={(event) => {
+          setEmployeeLoginId(event.target.value);
+          setEmployeeLoginError("");
+        }}
+        placeholder="EMP-001"
+      />
+    </label>
+
+    <label>
+      <span>Password</span>
+      <input
+        type="password"
+        value={employeeLoginPassword}
+        onChange={(event) => {
+          setEmployeeLoginPassword(event.target.value);
+          setEmployeeLoginError("");
+        }}
+        onKeyDown={(event) => {
+          if (event.key === "Enter") loginEmployee();
+        }}
+        placeholder="Enter password"
+      />
+    </label>
+
+    {employeeLoginError && (
+      <p className="employee-login-error">{employeeLoginError}</p>
+    )}
+
+    <button className="primary-button" onClick={loginEmployee}>
+      Employee Login
+    </button>
+  </div>
+)}
             {accessMode === "Employee" && (
               <div className="drawer-employee-card">
                 <span className="employee-avatar">
