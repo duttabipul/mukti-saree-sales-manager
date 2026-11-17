@@ -1501,9 +1501,16 @@ if (openSession) {
     const saleRestricted =
       accessMode === "Employee" && section === "new-sale" && !currentPermissions.sales;
     const protectedForEmployee =
-      accessMode === "Employee" &&
-      protectedSections.includes(section as ProtectedSection) &&
-      !(section === "dues" && currentPermissions.dueCollection);
+  accessMode === "Employee" &&
+  protectedSections.includes(section as ProtectedSection) &&
+  !(section === "dues" && currentPermissions.dueCollection);
+    const protectedForEmployee =
+  accessMode === "Employee" &&
+  protectedSections.includes(section as ProtectedSection) &&
+  !(
+    (section === "dues" || section === "advances") &&
+    currentPermissions.dueCollection
+  );
     if (protectedForEmployee || saleRestricted) {
       requestOwnerPassword(section as ProtectedSection);
       return;
@@ -5115,6 +5122,11 @@ setScreen("dashboard");
                       icon: "wallet" as IconName,
                       protected: !employeePermissions[currentEmployee.id].dueCollection,
                     },
+                  {
+                    id: "advances",
+                    label: "Customer Advances",
+                    icon: "wallet" as IconName,
+                  },
                     {
                       id: "transactions",
                       label: "My Transactions",
