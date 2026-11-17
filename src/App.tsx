@@ -1221,32 +1221,7 @@ if (openSession) {
       ),
     },
   ]);
-}
-    if (openSession) {
-  const clockInDate = new Date(openSession.clock_in);
-
-  setAttendance((current) => [
-    ...current.filter(
-      (session) =>
-        !(session.employeeId === employee.employee_code && !session.clockOutTimestamp)
-    ),
-    {
-      id: String(openSession.id),
-      employeeId: employee.employee_code,
-      employeeName: employee.full_name,
-      date: clockInDate.toISOString().slice(0, 10),
-      clockIn: clockInDate.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      clockInTimestamp: clockInDate.getTime(),
-      minutes: Math.max(
-        0,
-        Math.round((Date.now() - clockInDate.getTime()) / 60000)
-      ),
-    },
-  ]);
-}
+}    
   setLoggedEmployeeId(employee.employee_code);
   setClockEmployeeId(employee.employee_code);
   setAccessMode("Employee");
