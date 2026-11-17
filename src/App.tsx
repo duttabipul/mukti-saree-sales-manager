@@ -2076,7 +2076,7 @@ if (openSession) {
     setCompletedWorkMinutes(null);
   };
 
-  const clockOut = () => {
+  const clockOut = async () => {
     if (!activeClockSession) return;
     const now = new Date();
     const minutes = Math.max(
@@ -2113,6 +2113,43 @@ if (openSession) {
       ),
     );
     setCompletedWorkMinutes(minutes);
+    const {
+  data: { user },
+} = await supabase.auth.getUser();
+
+if (user) {
+  const { data: employeeRow, error: employeeError } = await supabase
+    .from("employees")
+    .select("id")
+    .eq("auth_user_id", user.id)
+    .single();
+
+  if (!employeeError && employeeRow) {
+    const { error: clockOutError } = await supabase
+      .from("attendance")
+      .update({
+        clock_out: now.toISOString(),
+      })
+      .eq("employee_id", employeeRow.id)
+      .is("clock_out", null);
+
+    if (clockOutError) {
+      console.error("Clock-out failed:", clockOutError);
+      return;
+    }
+  }
+}
+
+await supabase.auth.signOut();
+
+setLoggedEmployeeId("");
+setClockEmployeeId("");
+setAccessMode("Owner");
+setEmployeeLoggedIn(false);
+setEmployeeLoginPassword("");
+setEmployeeLoginError("");
+setDrawerOpen(false);
+setScreen("dashboard");
   };
 
   return (
