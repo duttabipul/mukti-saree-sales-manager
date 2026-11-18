@@ -739,7 +739,7 @@ const initialEmployees: Employee[] = [
   {
     id: 1,
     employeeId: "EMP-001",
-    name: "Priya Das",
+    name: "Emily Carter",
     role: "Sales Associate",
     phone: "01715 440 281",
     joiningDate: "12 January 2023",
@@ -753,7 +753,7 @@ const initialEmployees: Employee[] = [
   {
     id: 2,
     employeeId: "EMP-002",
-    name: "Riya Sen",
+    name: "Jessica Miller",
     role: "Inventory Assistant",
     phone: "01844 721 305",
     joiningDate: "08 July 2022",
@@ -767,7 +767,7 @@ const initialEmployees: Employee[] = [
   {
     id: 3,
     employeeId: "EMP-003",
-    name: "Anika Roy",
+    name: "John Smith",
     role: "Boutique Assistant",
     phone: "01628 551 702",
     joiningDate: "20 March 2024",
@@ -781,7 +781,7 @@ const initialEmployees: Employee[] = [
   {
     id: 4,
     employeeId: "EMP-004",
-    name: "Maya Dutta",
+    name: "Andrew Flew",
     role: "Delivery & Home Sales",
     phone: "01936 820 149",
     joiningDate: "15 September 2023",
@@ -798,7 +798,7 @@ const initialAttendance: AttendanceSession[] = [
   {
     id: 1,
     employeeId: "EMP-001",
-    employeeName: "Priya Das",
+    employeeName: "Emily Carter",
     date: "23 May 2025",
     clockIn: "9:02 AM",
     clockOut: "5:08 PM",
@@ -809,7 +809,7 @@ const initialAttendance: AttendanceSession[] = [
   {
     id: 2,
     employeeId: "EMP-002",
-    employeeName: "Riya Sen",
+    employeeName: "Jessica Miller",
     date: "23 May 2025",
     clockIn: "8:55 AM",
     clockOut: "4:58 PM",
@@ -820,7 +820,7 @@ const initialAttendance: AttendanceSession[] = [
   {
     id: 3,
     employeeId: "EMP-003",
-    employeeName: "Anika Roy",
+    employeeName: "John Smith",
     date: "22 May 2025",
     clockIn: "9:10 AM",
     clockOut: "5:02 PM",
