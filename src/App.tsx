@@ -126,7 +126,7 @@ type DueEvent = {
 };
 
 type DueCustomer = {
-  id: number;
+  id: number | string;
   name: string;
   phone: string;
   due: number;
@@ -1037,9 +1037,10 @@ export default function App() {
   const [transactionSearch, setTransactionSearch] = useState("");
   const [transactionEmployeeFilter, setTransactionEmployeeFilter] = useState("All");
   const [customerSearch, setCustomerSearch] = useState("");
-  const [selectedDirectoryCustomerId, setSelectedDirectoryCustomerId] = useState<number | null>(
-    null,
-  );
+  
+  const [selectedDirectoryCustomerId, setSelectedDirectoryCustomerId] =
+    useState<number | string | null>(null);
+
   const [backups, setBackups] = useState(initialBackups);
   const [accessMode, setAccessMode] = useState<"Owner" | "Employee">("Owner");
   const [protectedTarget, setProtectedTarget] = useState<ProtectedSection | "owner-mode" | null>(
@@ -1083,14 +1084,14 @@ export default function App() {
   const [advanceToApply, setAdvanceToApply] = useState("");
   const [error, setError] = useState("");
   const [dueCustomers, setDueCustomers] = useState(initialDueCustomers);
-  const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(null);
+  const [selectedCustomerId, setSelectedCustomerId] = useState<number | string | null>(null)
   const [dueSearch, setDueSearch] = useState("");
   const [duePayment, setDuePayment] = useState("");
   const [duePaymentMethod, setDuePaymentMethod] = useState<DuePaymentMethod | "">("");
   const [dueExcessOption, setDueExcessOption] = useState<"" | "return" | "advance">("");
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [advanceSearch, setAdvanceSearch] = useState("");
-  const [selectedAdvanceCustomerId, setSelectedAdvanceCustomerId] = useState<number | null>(null);
+  const [selectedAdvanceCustomerId, setSelectedAdvanceCustomerId] = useState<number | string | null>(null)
   const [inventoryProducts, setInventoryProducts] = useState(initialStockProducts);
   const [stockSearch, setStockSearch] = useState("");
   const [stockFilter, setStockFilter] = useState<"All" | "Low Stock">("All");
@@ -1814,7 +1815,7 @@ if (openSession) {
     setScreen("confirmation");
   };
 
-  const openDueCustomer = (id: number) => {
+  const openDueCustomer = (id: number | string) => {
     setSelectedCustomerId(id);
     setDuePayment("");
     setDuePaymentMethod("");
