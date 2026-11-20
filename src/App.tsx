@@ -1,5 +1,5 @@
 import { supabase } from './supabase'
-import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
 type Screen =
   | "dashboard"
@@ -162,7 +162,7 @@ type Employee = {
 };
 
 type AttendanceSession = {
-  id: number;
+  id: number | string;
   employeeId: string;
   employeeName: string;
   date: string;
@@ -213,224 +213,7 @@ type StockEntryForm = {
   notes: string;
 };
 
-const initialDueCustomers: DueCustomer[] = [
-  {
-    id: 1,
-    name: "Farzana Rahman",
-    phone: "01712 345 678",
-    due: 3800,
-    lastPurchase: "22 May 2025",
-    history: [
-      {
-        id: 11,
-        type: "Purchase",
-        date: "22 May 2025",
-        detail: "Silk sari · INV-008",
-        amount: 6200,
-      },
-      {
-        id: 12,
-        type: "Payment",
-        date: "22 May 2025",
-        detail: "Payment received",
-        amount: 2400,
-        method: "Cash",
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: "Nusrat Jahan",
-    phone: "01819 562 410",
-    due: 2400,
-    lastPurchase: "20 May 2025",
-    history: [
-      {
-        id: 21,
-        type: "Purchase",
-        date: "20 May 2025",
-        detail: "Jamdani sari · INV-004",
-        amount: 4800,
-      },
-      {
-        id: 22,
-        type: "Payment",
-        date: "20 May 2025",
-        detail: "Payment received",
-        amount: 2400,
-        method: "bKash",
-      },
-    ],
-  },
-  {
-    id: 3,
-    name: "Shahana Akter",
-    phone: "01635 778 921",
-    due: 1950,
-    lastPurchase: "18 May 2025",
-    history: [
-      {
-        id: 31,
-        type: "Purchase",
-        date: "18 May 2025",
-        detail: "Manipuri sari · INV-197",
-        amount: 3650,
-      },
-      {
-        id: 32,
-        type: "Payment",
-        date: "18 May 2025",
-        detail: "Payment received",
-        amount: 1700,
-        method: "Cash",
-      },
-    ],
-  },
-  {
-    id: 4,
-    name: "Rumana Chowdhury",
-    phone: "01911 403 866",
-    due: 1750,
-    lastPurchase: "15 May 2025",
-    history: [
-      {
-        id: 41,
-        type: "Purchase",
-        date: "15 May 2025",
-        detail: "Cotton sari · INV-191",
-        amount: 2750,
-      },
-      {
-        id: 42,
-        type: "Payment",
-        date: "15 May 2025",
-        detail: "Payment received",
-        amount: 1000,
-        method: "Cash",
-      },
-    ],
-  },
-  {
-    id: 5,
-    name: "Tahmina Sultana",
-    phone: "01780 144 592",
-    due: 1500,
-    lastPurchase: "12 May 2025",
-    history: [
-      {
-        id: 51,
-        type: "Purchase",
-        date: "12 May 2025",
-        detail: "Tangail sari · INV-184",
-        amount: 3200,
-      },
-      {
-        id: 52,
-        type: "Payment",
-        date: "12 May 2025",
-        detail: "Payment received",
-        amount: 1700,
-        method: "Bank Transfer",
-      },
-    ],
-  },
-  {
-    id: 6,
-    name: "Salma Begum",
-    phone: "01842 930 115",
-    due: 1000,
-    lastPurchase: "08 May 2025",
-    history: [
-      {
-        id: 61,
-        type: "Purchase",
-        date: "08 May 2025",
-        detail: "Cotton sari · INV-176",
-        amount: 2750,
-      },
-      {
-        id: 62,
-        type: "Payment",
-        date: "08 May 2025",
-        detail: "Payment received",
-        amount: 1750,
-        method: "Cash",
-      },
-    ],
-  },
-  {
-    id: 7,
-    name: "Nabil Islam",
-    phone: "Not provided",
-    due: 0,
-    advance: 500,
-    lastPurchase: "23 May 2025",
-    history: [
-      {
-        id: 71,
-        type: "Purchase",
-        date: "23 May 2025",
-        detail: "Manipuri sari · INV-009",
-        amount: 3700,
-      },
-      {
-        id: 72,
-        type: "Payment",
-        date: "23 May 2025",
-        detail: "Payment received",
-        amount: 4200,
-        method: "bKash",
-      },
-    ],
-    advanceHistory: [
-      {
-        id: 73,
-        date: "23 May 2025",
-        amountAdded: 500,
-        amountUsed: 0,
-        source: "Sale overpayment · INV-009",
-        method: "bKash",
-        remainingBalance: 500,
-      },
-    ],
-  },
-  {
-    id: 8,
-    name: "Maliha Karim",
-    phone: "01790 661 428",
-    due: 0,
-    advance: 1200,
-    lastPurchase: "19 May 2025",
-    history: [
-      {
-        id: 81,
-        type: "Purchase",
-        date: "19 May 2025",
-        detail: "Jamdani sari · INV-006",
-        amount: 4800,
-      },
-      {
-        id: 82,
-        type: "Payment",
-        date: "19 May 2025",
-        detail: "Payment received",
-        amount: 6000,
-        method: "Cash",
-      },
-    ],
-    advanceHistory: [
-      {
-        id: 83,
-        date: "19 May 2025",
-        amountAdded: 1200,
-        amountUsed: 0,
-        source: "Sale overpayment · INV-006",
-        method: "Cash",
-        remainingBalance: 1200,
-      },
-    ],
-  },
-];
+// Customers are loaded from Supabase after authentication.
 
 const initialStockProducts: InventoryProduct[] = [
   {
@@ -1083,7 +866,9 @@ export default function App() {
   const [excessOption, setExcessOption] = useState<"" | "return" | "advance">("");
   const [advanceToApply, setAdvanceToApply] = useState("");
   const [error, setError] = useState("");
-  const [dueCustomers, setDueCustomers] = useState(initialDueCustomers);
+  const [dueCustomers, setDueCustomers] = useState<DueCustomer[]>([]);
+  const [customersLoading, setCustomersLoading] = useState(true);
+  const [customersError, setCustomersError] = useState("");
   const [selectedCustomerId, setSelectedCustomerId] = useState<number | string | null>(null)
   const [dueSearch, setDueSearch] = useState("");
   const [duePayment, setDuePayment] = useState("");
@@ -1125,26 +910,143 @@ export default function App() {
     null,
   );
   const [employeeEntry, setEmployeeEntry] = useState("");
+  
+  const [customersRefreshKey, setCustomersRefreshKey] = useState(0);
+  const [savingDuePayment, setSavingDuePayment] = useState(false);
+  const [dueSaveError, setDueSaveError] = useState("");
+  const duePaymentRequestId = useRef<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    let requestId = 0;
+
+    const loadCustomers = async (authenticated: boolean) => {
+      const request = ++requestId;
+      if (!authenticated) {
+        setDueCustomers([]);
+        setDuePaymentRecords([]);
+        setCustomersError("Sign in to view customer records.");
+        setCustomersLoading(false);
+        return;
+      }
+
+      setCustomersLoading(true);
+      setCustomersError("");
+      const { data, error } = await supabase
+        .from("customers")
+        .select("id, full_name, phone, current_due, advance_balance")
+        .order("full_name", { ascending: true });
+
+      if (!active || request !== requestId) return;
+      if (error) {
+        console.error("Customer loading failed:", error);
+        setDueCustomers([]);
+        setDuePaymentRecords([]);
+        setCustomersError("Unable to load customer records. Please sign in again or contact the owner.");
+        setCustomersLoading(false);
+        return;
+      }
+
+      // Payment ledger is created by the accompanying Supabase SQL migration.
+      const ledger = await supabase
+        .from("customer_payment_events")
+        .select("id, customer_id, amount_received, amount_applied, change_returned, advance_created, payment_method, created_at, employee_code, employee_name, previous_due, remaining_due, advance_balance_after")
+        .order("created_at", { ascending: false });
+
+      if (!active || request !== requestId) return;
+      if (ledger.error) {
+        console.error("Customer payment history unavailable:", ledger.error);
+        setDueCustomers([]);
+        setDuePaymentRecords([]);
+        setCustomersError("Payment history is unavailable. Apply the Supabase payment migration before using customer records.");
+        setCustomersLoading(false);
+        return;
+      }
+
+      const events = ledger.data ?? [];
+      const mapped: DueCustomer[] = (data ?? []).map((row) => {
+        const payments = events.filter((event) => event.customer_id === row.id);
+        return {
+          id: row.id,
+          name: row.full_name,
+          phone: row.phone || "Not provided",
+          due: Number(row.current_due ?? 0),
+          advance: Number(row.advance_balance ?? 0),
+          lastPurchase: "Not available (sales migration pending)",
+          history: payments.map((event) => ({
+            id: Number(event.id),
+            type: "Payment" as const,
+            date: new Date(event.created_at).toLocaleDateString("en-GB", { timeZone: "Asia/Dhaka", day: "2-digit", month: "short", year: "numeric" }),
+            detail: "Due payment received",
+            amount: Number(event.amount_received),
+            method: event.payment_method as PaymentMethod,
+            appliedToDue: Number(event.amount_applied),
+            changeReturned: Number(event.change_returned),
+            advanceCreated: Number(event.advance_created),
+          })),
+          advanceHistory: payments
+            .filter((event) => Number(event.advance_created) > 0)
+            .map((event) => ({
+              id: Number(event.id),
+              date: new Date(event.created_at).toLocaleDateString("en-GB", { timeZone: "Asia/Dhaka", day: "2-digit", month: "short", year: "numeric" }),
+              amountAdded: Number(event.advance_created),
+              amountUsed: 0,
+              source: "Due payment overpayment",
+              method: event.payment_method as PaymentMethod,
+              remainingBalance: Number(event.advance_balance_after),
+            })),
+        };
+      });
+      setDueCustomers(mapped);
+      setDuePaymentRecords(events.map((event) => {
+        const customerRow = (data ?? []).find((row) => row.id === event.customer_id);
+        const timestamp = new Date(event.created_at);
+        return {
+          id: Number(event.id),
+          reference: `PAY-${event.id}`,
+          customerId: String(event.customer_id),
+          customerName: customerRow?.full_name ?? "Customer",
+          amountReceived: Number(event.amount_received),
+          method: event.payment_method as PaymentMethod,
+          date: timestamp.toLocaleDateString("en-GB", { timeZone: "Asia/Dhaka", day: "2-digit", month: "short", year: "numeric" }),
+          time: timestamp.toLocaleTimeString("en-US", { timeZone: "Asia/Dhaka", hour: "numeric", minute: "2-digit" }),
+          employeeName: event.employee_name,
+          employeeId: event.employee_code,
+          previousDue: Number(event.previous_due),
+          remainingDue: Number(event.remaining_due),
+          changeReturned: Number(event.change_returned),
+          advanceCreated: Number(event.advance_created),
+        };
+      }));
+      setCustomersLoading(false);
+    };
+
+    // Defer queries until the auth callback has finished updating Supabase session state.
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
+        setTimeout(() => { if (active) void loadCustomers(Boolean(session)); }, 0);
+      }
+    });
+    void supabase.auth.getSession().then(({ data, error }) => {
+      if (!active) return;
+      if (error) {
+        setCustomersLoading(false);
+        setCustomersError("Unable to verify your login session.");
+      } else {
+        void loadCustomers(Boolean(data.session));
+      }
+    });
+    return () => {
+      active = false;
+      requestId++;
+      authListener.subscription.unsubscribe();
+    };
+  }, [customersRefreshKey]);
+
   useEffect(() => {
     const timer = window.setInterval(() => setCurrentTime(new Date()), 1000);
     return () => window.clearInterval(timer);
   }, []);
-useEffect(() => {
-  const testSupabaseConnection = async () => {
-    const { data, error } = await supabase
-      .from('active_employees')
-      .select('*')
-      .limit(5);
-
-    if (error) {
-      console.error('Supabase connection error:', error);
-    } else {
-      console.log('Supabase connected successfully:', data);
-    }
-  };
-
-  testSupabaseConnection();
-}, []);
   const loginEmployee = async () => {
   const employeeId = employeeLoginId.trim().toUpperCase();
 
@@ -1817,6 +1719,8 @@ if (openSession) {
 
   const openDueCustomer = (id: number | string) => {
     setSelectedCustomerId(id);
+    duePaymentRequestId.current = null;
+    setDueSaveError("");
     setDuePayment("");
     setDuePaymentMethod("");
     setDueExcessOption("");
@@ -1824,76 +1728,60 @@ if (openSession) {
     setScreen("due-detail");
   };
 
-  const recordDuePayment = () => {
-    if (!selectedDueCustomer || !duePaymentMethod) return;
-    if (duePaymentAmount <= 0 || (duePaymentExcess > 0 && !dueExcessOption)) return;
-    const advanceCreated = dueExcessOption === "advance" ? duePaymentExcess : 0;
-    const changeReturned = dueExcessOption === "return" ? duePaymentExcess : 0;
-    const paymentDate = displayDate(localDateKey(new Date()));
-    const paymentTimestamp = Date.now();
-    const paymentRecord: DuePaymentRecord = {
-      id: paymentTimestamp,
-      reference: `PAY-${String(paymentTimestamp).slice(-6)}`,
-      customerId: `CUS-${String(selectedDueCustomer.id).padStart(3, "0")}`,
-      customerName: selectedDueCustomer.name,
-      amountReceived: duePaymentAmount,
-      method: duePaymentMethod,
-      date: paymentDate,
-      time: formatTime(new Date()),
-      employeeName: currentActor.employeeName,
-      employeeId: currentActor.employeeId,
-      previousDue: selectedDueCustomer.due,
-      remainingDue: Math.max(selectedDueCustomer.due - duePaymentApplied, 0),
-      changeReturned,
-      advanceCreated,
-    };
-    setDueCustomers((current) =>
-      current.map((entry) =>
+  const recordDuePayment = async () => {
+    if (savingDuePayment || customersLoading || customersError || !selectedDueCustomer || !duePaymentMethod) return;
+    if (typeof selectedDueCustomer.id !== "string") return;
+    if (!Number.isFinite(duePaymentAmount) || duePaymentAmount <= 0 || (duePaymentExcess > 0 && !dueExcessOption)) return;
+    setSavingDuePayment(true);
+    setDueSaveError("");
+    // Reuse the same request ID after a network error to prevent duplicate payments.
+    if (!duePaymentRequestId.current) duePaymentRequestId.current = crypto.randomUUID();
+    try {
+      const { data, error: paymentError } = await supabase.rpc("record_customer_due_payment", {
+        p_customer_id: selectedDueCustomer.id,
+        p_amount_received: duePaymentAmount,
+        p_payment_method: duePaymentMethod,
+        p_excess_option: dueExcessOption || "return",
+        p_request_id: duePaymentRequestId.current,
+      });
+      if (paymentError || !data) throw paymentError ?? new Error("Payment response missing");
+      const result = data as { id: number; reference: string; previous_due: number; remaining_due: number; change_returned: number; advance_created: number };
+      const now = new Date();
+      const paymentRecord: DuePaymentRecord = {
+        id: Number(result.id),
+        reference: result.reference,
+        customerId: String(selectedDueCustomer.id),
+        customerName: selectedDueCustomer.name,
+        amountReceived: duePaymentAmount,
+        method: duePaymentMethod,
+        date: now.toLocaleDateString("en-GB", { timeZone: "Asia/Dhaka", day: "2-digit", month: "short", year: "numeric" }),
+        time: now.toLocaleTimeString("en-US", { timeZone: "Asia/Dhaka", hour: "numeric", minute: "2-digit" }),
+        employeeName: currentActor.employeeName,
+        employeeId: currentActor.employeeId,
+        previousDue: Number(result.previous_due),
+        remainingDue: Number(result.remaining_due),
+        changeReturned: Number(result.change_returned),
+        advanceCreated: Number(result.advance_created),
+      };
+      duePaymentRequestId.current = null;
+      setLastDuePayment(paymentRecord);
+      setDueCustomers((current) => current.map((entry) =>
         entry.id === selectedDueCustomer.id
-          ? {
-              ...entry,
-              due: Math.max(entry.due - duePaymentApplied, 0),
-              advance: (entry.advance ?? 0) + advanceCreated,
-              advanceHistory:
-                advanceCreated > 0
-                  ? [
-                      {
-                        id: paymentTimestamp + 1,
-                        date: paymentDate,
-                        amountAdded: advanceCreated,
-                        amountUsed: 0,
-                        source: "Due payment overpayment",
-                        method: duePaymentMethod,
-                        remainingBalance: (entry.advance ?? 0) + advanceCreated,
-                      },
-                      ...(entry.advanceHistory ?? []),
-                    ]
-                  : entry.advanceHistory,
-              history: [
-                {
-                  id: paymentTimestamp,
-                  type: "Payment",
-                  date: paymentDate,
-                  detail: "Payment received",
-                  amount: duePaymentAmount,
-                  method: duePaymentMethod,
-                  appliedToDue: duePaymentApplied,
-                  changeReturned,
-                  advanceCreated,
-                },
-                ...entry.history,
-              ],
-            }
-          : entry,
-      ),
-    );
-    setDuePayment("");
-    setDuePaymentMethod("");
-    setDueExcessOption("");
-    setShowPaymentForm(false);
-    setDuePaymentRecords((current) => [paymentRecord, ...current]);
-    setLastDuePayment(paymentRecord);
-    setScreen("due-payment-confirmation");
+          ? { ...entry, due: paymentRecord.remainingDue, advance: (entry.advance ?? 0) + paymentRecord.advanceCreated }
+          : entry
+      ));
+      setDuePayment("");
+      setDuePaymentMethod("");
+      setDueExcessOption("");
+      setShowPaymentForm(false);
+      setScreen("due-payment-confirmation");
+      setCustomersRefreshKey((key) => key + 1);
+    } catch (paymentError) {
+      console.error("Due payment could not be saved:", paymentError);
+      setDueSaveError("Payment was NOT recorded. Check your connection and Supabase configuration before trying again.");
+    } finally {
+      setSavingDuePayment(false);
+    }
   };
 
   const startStockEntry = () => {
@@ -2212,10 +2100,10 @@ setScreen("dashboard");
                       <Icon name="wallet" />
                     </div>
                     <p>Customer due</p>
-                    <strong>{money(totalCustomerDue)}</strong>
-                    <small>Across {activeDueCustomers.length} customers</small>
+                    <strong>{customersLoading || customersError ? "—" : money(totalCustomerDue)}</strong>
+                    <small>{customersLoading || customersError ? "Customer records unavailable" : `Across ${activeDueCustomers.length} customers`}</small>
                     <small className="advance-summary">
-                      Customer Advances: {money(totalCustomerAdvance)}
+                      Customer Advances: {customersLoading || customersError ? "—" : money(totalCustomerAdvance)}
                     </small>
                   </article>
                   <article className="metric-card">
@@ -2287,7 +2175,7 @@ setScreen("dashboard");
                       </span>
                       <b>Advances</b>
                       <small>
-                        {advanceCustomers.length} customers · {money(totalCustomerAdvance)}
+                        {customersLoading || customersError ? "Customer records unavailable" : `${advanceCustomers.length} customers · ${money(totalCustomerAdvance)}`}
                       </small>
                       <Icon name="chevron" size={16} />
                     </button>
@@ -2581,7 +2469,7 @@ setScreen("dashboard");
                     key={`due-${entry.id}`}
                     onClick={() => {
                       setLastDuePayment(entry);
-                      setSelectedCustomerId(Number(entry.customerId.replace("CUS-", "")));
+                      setSelectedCustomerId(entry.customerId);
                       setScreen("due-payment-confirmation");
                     }}
                   >
@@ -2707,16 +2595,33 @@ setScreen("dashboard");
               onMenu={() => setDrawerOpen(true)}
             />
             <section className="business-content">
+              
+              {customersLoading && (
+                <p role="status">Loading customers...</p>
+              )}
+              
+              {customersError && (
+                <p role="alert" className="stock-entry-error">
+                  {customersError}
+                </p>
+              )}
+
               <div className="directory-summary">
                 <div>
                   <span>Total customers</span>
-                  <strong>{dueCustomers.length}</strong>
+                  
+                  <strong>
+                    {customersLoading || customersError
+                      ? "—"
+                      : dueCustomers.length}
+                  </strong>
+
                 </div>
                 <div>
                   <span>Settled accounts</span>
                   <strong>
                     {
-                      dueCustomers.filter((entry) => entry.due === 0 && (entry.advance ?? 0) === 0)
+                      customersLoading || customersError ? "—" : dueCustomers.filter((entry) => entry.due === 0 && (entry.advance ?? 0) === 0)
                         .length
                     }
                   </strong>
@@ -2732,7 +2637,7 @@ setScreen("dashboard");
               </label>
               <div className="list-heading">
                 <span>Customer accounts</span>
-                <small>{filteredDirectoryCustomers.length} found</small>
+                <small>{customersLoading || customersError ? "—" : filteredDirectoryCustomers.length} found</small>
               </div>
               <div className="customer-list">
                 {filteredDirectoryCustomers.map((entry) => (
@@ -3319,16 +3224,36 @@ setScreen("dashboard");
               subtitle={
                 accessMode === "Employee"
                   ? "Search and collect outstanding customer payments"
-                  : `${activeDueCustomers.length} customers with pending payments`
+                  : 
+                    customersLoading || customersError
+                      ? "Customer records unavailable"
+                      : `${activeDueCustomers.length} customers with pending payments`
+
               }
               onBack={() => setScreen("dashboard")}
               onMenu={() => setDrawerOpen(true)}
             />
-            <section className="business-content">
+                  <section className="business-content">
+            {customersLoading && (
+              <p role="status">Loading customer records...</p>
+            )}
+            
+            {customersError && (
+              <p role="alert" className="stock-entry-error">
+                {customersError}
+              </p>
+            )}
+
               {accessMode === "Owner" && (
                 <div className="business-summary due-summary">
                   <span>Total outstanding</span>
-                  <strong>{money(totalCustomerDue)}</strong>
+                  
+                  <strong>
+                    {customersLoading || customersError
+                      ? "—"
+                      : money(totalCustomerDue)}
+                  </strong>
+                  
                   <small>Updated today</small>
                 </div>
               )}
@@ -3342,7 +3267,7 @@ setScreen("dashboard");
               </label>
               <div className="list-heading">
                 <span>Customers</span>
-                <small>{filteredDueCustomers.length} found</small>
+                <small>{customersLoading || customersError ? "—" : filteredDueCustomers.length} found</small>
               </div>
               <div className="customer-list">
                 {filteredDueCustomers.map((entry) => (
@@ -3387,7 +3312,7 @@ setScreen("dashboard");
                     </span>
                   </button>
                 ))}
-                {filteredDueCustomers.length === 0 && (
+                {!customersLoading && !customersError && filteredDueCustomers.length === 0 && (
                   <div className="empty-state">
                     <Icon name="search" />
                     <b>No customers found</b>
@@ -3458,6 +3383,7 @@ setScreen("dashboard");
                         value={duePayment}
                         onChange={(event) => {
                           setDuePayment(event.target.value);
+                          duePaymentRequestId.current = null;
                           setDueExcessOption("");
                         }}
                         placeholder="0"
@@ -3475,6 +3401,7 @@ setScreen("dashboard");
                           key={amount}
                           onClick={() => {
                             setDuePayment(String(amount));
+                            duePaymentRequestId.current = null;
                             setDueExcessOption("");
                           }}
                         >
@@ -3495,7 +3422,7 @@ setScreen("dashboard");
                         <div className="excess-options">
                           <button
                             className={dueExcessOption === "return" ? "active" : ""}
-                            onClick={() => setDueExcessOption("return")}
+                            onClick={() => { duePaymentRequestId.current = null; setDueExcessOption("return"); }}
                           >
                             <span>
                               <Icon name="wallet" size={20} />
@@ -3508,7 +3435,7 @@ setScreen("dashboard");
                           </button>
                           <button
                             className={dueExcessOption === "advance" ? "active" : ""}
-                            onClick={() => setDueExcessOption("advance")}
+                            onClick={() => { duePaymentRequestId.current = null; setDueExcessOption("advance"); }}
                           >
                             <span>
                               <Icon name="user" size={20} />
@@ -3532,7 +3459,7 @@ setScreen("dashboard");
                     <select
                       value={duePaymentMethod}
                       onChange={(event) =>
-                        setDuePaymentMethod(event.target.value as DuePaymentMethod | "")
+                        (duePaymentRequestId.current = null, setDuePaymentMethod(event.target.value as DuePaymentMethod | ""))
                       }
                     >
                       <option value="" disabled>
@@ -3549,14 +3476,16 @@ setScreen("dashboard");
                   </label>
                   <button
                     className="primary-button"
+                    
                     disabled={
-                      !Number(duePayment) ||
-                      !duePaymentMethod ||
+                      savingDuePayment || customersLoading || Boolean(customersError) ||
+                      !Number(duePayment) || !duePaymentMethod ||
                       (duePaymentExcess > 0 && !dueExcessOption)
                     }
+
                     onClick={recordDuePayment}
                   >
-                    Save payment <Icon name="check" size={19} />
+                    {savingDuePayment ? "Saving payment..." : "Save payment"} <Icon name="check" size={19} />
                   </button>
                 </div>
               ) : (
@@ -3588,7 +3517,7 @@ setScreen("dashboard");
 
               <div className="history-heading">
                 <h2>Purchase & payment history</h2>
-                <p>Most recent activity first</p>
+                <p>{accessMode === "Employee" ? "Your recorded due payments (sales history pending)" : "Recorded due payments (sales history pending)"}</p>
               </div>
               <div className="history-list">
                 {selectedDueCustomer.history.map((event) => (
@@ -3729,15 +3658,37 @@ setScreen("dashboard");
               onMenu={() => setDrawerOpen(true)}
             />
             <section className="business-content">
+              {customersLoading && (
+                <p role="status">Loading customer advances...</p>
+              )}
+              
+              {customersError && (
+                <p role="alert" className="stock-entry-error">
+                  {customersError}
+                </p>
+              )}
+
               <div className="advance-overview">
                 <div>
                   <span>Total Customer Advance</span>
-                  <strong>{money(totalCustomerAdvance)}</strong>
+                  
+                <strong>
+                  {customersLoading || customersError
+                    ? "—"
+                    : money(totalCustomerAdvance)}
+                </strong>
+
                 </div>
                 <i />
                 <div>
                   <span>Customers with Advance</span>
-                  <strong>{advanceCustomers.length}</strong>
+                  
+                <strong>
+                  {customersLoading || customersError
+                    ? "—"
+                    : advanceCustomers.length}
+                </strong>
+
                 </div>
               </div>
 
@@ -3752,7 +3703,7 @@ setScreen("dashboard");
 
               <div className="list-heading">
                 <span>Active advances</span>
-                <small>{filteredAdvanceCustomers.length} customers</small>
+                <small>{customersLoading || customersError ? "—" : filteredAdvanceCustomers.length} customers</small>
               </div>
               <div className="advance-customer-list">
                 {filteredAdvanceCustomers.map((entry) => (
@@ -3785,7 +3736,7 @@ setScreen("dashboard");
                     </span>
                   </button>
                 ))}
-                {filteredAdvanceCustomers.length === 0 && (
+                {!customersLoading && !customersError && filteredAdvanceCustomers.length === 0 && (
                   <div className="empty-state">
                     <Icon name="wallet" />
                     <b>No active advances</b>
@@ -4925,7 +4876,7 @@ setScreen("dashboard");
               <button
                 className="primary-button"
                 onClick={confirmSale}
-                disabled={excessAmount > 0 && !excessOption}
+                disabled={true}
               >
                 Confirm sale <Icon name="check" />
               </button>
